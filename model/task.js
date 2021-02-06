@@ -22,6 +22,30 @@ const {grey} = require('kleur');
 const {ObjectID} = require('mongodb');
 const pa11y = require('pa11y');
 
+const Waterline = require('waterline');
+
+const tasksCollection = Waterline.Collection.extend({
+  identity: 'tasks',
+  datastore: 'default',
+  primaryKey: 'id',
+
+  attributes: {
+    id: {
+        type: 'number',
+        autoMigrations: {autoIncrement: true}
+    },
+    firstName: {type:'string'},
+    lastName: {type:'string'},
+
+    // Add a reference to Pets
+    pets: {
+      collection: 'pet',
+      via: 'owner'
+    }
+  }
+});
+
+
 // Task model
 module.exports = function(app, callback) {
 	app.db.collection('tasks', function(errors, collection) {
